@@ -161,7 +161,7 @@ void animation_sample()
     glRecti(300, 300, 790, 310 + i);
 }
 
-void draw_field_point(Position p, Color c)
+void draw_grid_point(Position p, Color c)
 {
     if (p.x >= MAX_X || p.y >= MAX_Y)
         return;
@@ -186,7 +186,7 @@ void animation_sample2()
 {
     if (k <= maxK)
     {
-        draw_field_point({.x = 7, .y = 9 - k}, {.r = 1.0, .g = 0.0, .b = 0.0});
+        draw_grid_point({.x = 7, .y = 9 - k}, {.r = 1.0, .g = 0.0, .b = 0.0});
         k++;
     }
     else
@@ -220,7 +220,7 @@ void OGLWidget::paintGL()
 
     show_grid_lines({.r = 1.0, .g = 0.0, .b = 0.0});
 
-    draw_field_point({.x = 0, .y = 0}, {.r = 0.0, .g = 0.0, .b = 1.0});
+    draw_grid_point({.x = 0, .y = 0}, {.r = 0.0, .g = 0.0, .b = 1.0});
 
     animation_sample2();
 

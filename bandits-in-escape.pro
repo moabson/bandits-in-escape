@@ -25,9 +25,11 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    oglwidget.cpp
+    oglwidget.cpp \
+    game.cpp
 
 HEADERS  += mainwindow.h \
-    oglwidget.h
+    oglwidget.h \
+    game.h
 
 FORMS    += mainwindow.ui
