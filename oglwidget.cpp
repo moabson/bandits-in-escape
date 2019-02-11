@@ -7,6 +7,9 @@ static int _HEIGHT = 0;
 static int _GRID_OFFSET_X = 0;
 static int _GRID_OFFSET_Y = 0;
 
+#define MAX_X 16
+#define MAX_Y 12
+
 OGLWidget::OGLWidget(QWidget *parent)
     : QOpenGLWidget(parent)
 {
@@ -160,30 +163,14 @@ void animation_sample()
 
 void draw_field_point(Position p, Color c)
 {
+    if (p.x >= MAX_X || p.y >= MAX_Y)
+        return;
+
     int minX, maxX;
     int minY, maxY;
-    int x, y;
 
-    if (p.x == 0)
-    {
-        x = 1;
-    }
-    else
-    {
-        x = p.x + 1;
-    }
-
-    if (p.y == 0)
-    {
-        y = 1;
-    }
-    else
-    {
-        y = p.y + 1;
-    }
-
-    maxX = x * _GRID_OFFSET_X;
-    maxY = y * _GRID_OFFSET_Y;
+    maxX = ((p.x == 0) ? 1 : p.x + 1) * _GRID_OFFSET_X;
+    maxY = ((p.y == 0) ? 1 : p.y + 1) * _GRID_OFFSET_Y;
 
     minX = maxX - _GRID_OFFSET_X;
     minY = maxY - _GRID_OFFSET_Y;
@@ -231,13 +218,9 @@ void OGLWidget::paintGL()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
-//    cout << "dx " << _GRID_OFFSET_X << endl;
-//    cout << "dy " << _GRID_OFFSET_Y << endl;
-
     show_grid_lines({.r = 1.0, .g = 0.0, .b = 0.0});
 
-//    draw_field_point({.x = 7, .y = 9}, {.r = 1.0, .g = 0.0, .b = 0.0});
+    draw_field_point({.x = 0, .y = 0}, {.r = 0.0, .g = 0.0, .b = 1.0});
 
     animation_sample2();
 
@@ -262,6 +245,6 @@ void OGLWidget::resizeGL(int w, int h)
     _HEIGHT = h;
 
     // 12 x 16
-    _GRID_OFFSET_X = _WIDTH / 16;
-    _GRID_OFFSET_Y = _HEIGHT / 12;
+    _GRID_OFFSET_X = _WIDTH / MAX_X;
+    _GRID_OFFSET_Y = _HEIGHT / MAX_Y;
 }
