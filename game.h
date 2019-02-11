@@ -14,9 +14,6 @@
 
 using namespace  std;
 
-//#define MAX_X 5
-//#define MAX_Y 5
-
 enum TileType
 {
     FLOOR,
@@ -90,8 +87,11 @@ public:
     bool collision(Tile *check);
     void print_path(Tile *current);
     void clear_computedvalues();
-    bool search(Tile *start, Tile *target);
+    vector<Tile*> search(Tile *start, Tile *target);
+    void reconstruct_path(Tile *current, vector<Tile*>* path);
     void print_field();
+    int get_x();
+    int get_y();
 
 private:
     Tile **field;

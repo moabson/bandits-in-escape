@@ -35,11 +35,6 @@ protected:
     void resizeGL(int w, int h);
     void paintGL();
     void mousePressEvent(QMouseEvent *event);
-    friend std::ostream& operator<< (std::ostream& cout, Position& pos)
-    {
-        cout << "(" << pos.x << "," << pos.y << ")";
-        return cout;
-    }
 
 private:
 

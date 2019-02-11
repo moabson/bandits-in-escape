@@ -22,7 +22,7 @@ Game::Game(int MAX_X, int MAX_Y)
     Tile t1_VICTIM = Tile(VICTIM, {.x = 4, .y = 2});
     t1_VICTIM.is_target = true;
 
-    Tile t2_VICTIM = Tile(VICTIM, {.x = 1, .y = 4});
+    Tile t2_VICTIM = Tile(VICTIM, {.x = 15, .y = 6});
     t2_VICTIM.is_target = true;
 
     add_tile(Tile(ZOMBIE, {.x = 0, .y = 2}));
@@ -212,20 +212,36 @@ Tile* (Game::*neighbors[])(Tile*) = {
     &Game::get_tile_bottom
 };
 
-// A-star based search
-bool Game::search(Tile *start, Tile *target)
+void Game::reconstruct_path(Tile *current, vector<Tile*>* path)
 {
+    auto it = came_from.find(current);
+    bool end = it == came_from.end();
+
+    if (!end)
+    {
+        reconstruct_path(it->second, &(*path));
+        cout << it->second->position << endl;
+        path->push_back(it->second);
+    }
+}
+
+// A-star based search
+vector<Tile*> Game::search(Tile *start, Tile *target)
+{
+    vector<Tile*> path;
+
     if (start == nullptr || target == nullptr)
-        return false;
+        return path;
 
     if (!target->is_target) {
-        return false;
+        return path;
     }
 
     if (start->is_target)
-        return false;
+        return path;
 
     clear_computedvalues();
+
 
     open.push(start);
 
@@ -235,8 +251,9 @@ bool Game::search(Tile *start, Tile *target)
 
         if (is_equal(current, target))
         {
-            print_path(current);
-            return true;
+//            print_path(current);
+            reconstruct_path(current, &path);
+            return path;
         }
 
         open.pop();
@@ -262,7 +279,7 @@ bool Game::search(Tile *start, Tile *target)
         }
     }
 
-    return false;
+    return path;
 }
 
 void Game::print_field()
@@ -275,6 +292,16 @@ void Game::print_field()
         }
         cout << endl;
     }
+}
+
+int Game::get_x()
+{
+    return MAX_X;
+}
+
+int Game::get_y()
+{
+    return MAX_Y;
 }
 
 Game::~Game()

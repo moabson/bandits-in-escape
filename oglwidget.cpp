@@ -7,8 +7,14 @@ static int _HEIGHT = 0;
 static int _GRID_OFFSET_X = 0;
 static int _GRID_OFFSET_Y = 0;
 
-#define MAX_X 16
-#define MAX_Y 12
+#define NMAX_X 16
+#define NMAX_Y 12
+
+Game game(NMAX_X, NMAX_Y);
+
+static int pi = 0;
+vector<Tile*> path2;
+static int maxpi = 10;
 
 OGLWidget::OGLWidget(QWidget *parent)
     : QOpenGLWidget(parent)
@@ -19,7 +25,22 @@ OGLWidget::OGLWidget(QWidget *parent)
 
     cout << "Construtor" << endl;
 
+    game.print_field();
 
+    Tile *K = game.get_tile({.x = 1, .y = 2});
+    Tile *target1 = game.get_tile({.x = 4, .y = 2});
+    Tile *target2 = game.get_tile({.x = 15, .y = 6});
+    // Tile *target2 = target_with_mindist(K);
+
+    cout << game.search(K, target1).size() << endl;
+
+    for(Tile* t : game.search(K, target2))
+    {
+        path2.push_back(t);
+    }
+
+
+//    path2 = &game.search(K, target2);
 
 }
 
@@ -161,9 +182,10 @@ void animation_sample()
     glRecti(300, 300, 790, 310 + i);
 }
 
+
 void draw_grid_point(Position p, Color c)
 {
-    if (p.x >= MAX_X || p.y >= MAX_Y)
+    if (p.x >= NMAX_X || p.y >= NMAX_Y)
         return;
 
     int minX, maxX;
@@ -177,6 +199,56 @@ void draw_grid_point(Position p, Color c)
 
     glColor3f(c.r, c.g, c.b);
     glRecti(minX, minY, maxX, maxY);
+}
+
+void animation_sample3()
+{
+    if (pi < path2.size())
+    {
+        Tile* current = path2.at(pi);
+
+        draw_grid_point({.x = current->position.x, .y = current->position.y}, {.r = 0.6, .g = 0.1, .b = 0.5});
+
+//        cout << i << endl;
+        ++pi;
+    }
+    else
+    {
+        pi = 0;
+    }
+}
+
+
+void show_tiles()
+{
+    for (int y = 0; y < game.get_y(); ++y)
+    {
+        for (int x = 0; x < game.get_x(); ++x)
+        {
+            Tile* tile = game.get_tile({.x = x, .y = y});
+
+            Color c;
+
+            switch (tile->type) {
+            case FLOOR:
+                c = {.r = 0.5, .g = 0.3, .b = 0.9};
+                break;
+            case WALL:
+                c = {.r = 1.0, .g = 1.0, .b = 0.5};
+                break;
+            case ZOMBIE:
+                c = {.r = 1.0, .g = 0.0, .b = 0.0};
+                break;
+            case VICTIM:
+                c = {.r = 0.0, .g = 0.0, .b = 1.0};
+                break;
+            default:
+                break;
+            }
+
+            draw_grid_point({.x = x, .y = y}, c);
+        }
+    }
 }
 
 int k = 0;
@@ -218,11 +290,14 @@ void OGLWidget::paintGL()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    show_grid_lines({.r = 1.0, .g = 0.0, .b = 0.0});
+//    show_grid_lines({.r = 1.0, .g = 0.0, .b = 0.0});
 
-    draw_grid_point({.x = 0, .y = 0}, {.r = 0.0, .g = 0.0, .b = 1.0});
+    show_tiles();
+    animation_sample3();
 
-    animation_sample2();
+//    draw_grid_point({.x = 0, .y = 0}, {.r = 0.0, .g = 0.0, .b = 1.0});
+
+//    animation_sample2();
 
     glFlush();
 
@@ -245,6 +320,6 @@ void OGLWidget::resizeGL(int w, int h)
     _HEIGHT = h;
 
     // 12 x 16
-    _GRID_OFFSET_X = _WIDTH / MAX_X;
-    _GRID_OFFSET_Y = _HEIGHT / MAX_Y;
+    _GRID_OFFSET_X = _WIDTH / NMAX_X;
+    _GRID_OFFSET_Y = _HEIGHT / NMAX_Y;
 }
