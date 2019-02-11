@@ -7,7 +7,7 @@ OGLWidget::OGLWidget(QWidget *parent)
 {
     QTimer *timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(update()));
-    timer->start(10);
+    timer->start(500);
 
     cout << "Construtor" << endl;
 }
@@ -22,6 +22,9 @@ void OGLWidget::initializeGL()
     resizeGL(this->width(),this->height());
 }
 
+int i = 0;
+int maxi = 700;
+
 void OGLWidget::paintGL()
 {
 
@@ -31,7 +34,13 @@ void OGLWidget::paintGL()
     glRecti(300, 300, 790, 10);
 
     glColor3f(1.0, 0.0, 0.0);
-    glRecti(300, 300, 790, 310);
+    glRecti(300, 300, 790, 310 + i);
+
+    if (i < maxi)
+    {
+        i = i + 20;
+        cout << "menor" << endl;
+    }
 
     glFlush();
 
