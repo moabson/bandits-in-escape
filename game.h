@@ -19,7 +19,16 @@ enum TileType
     FLOOR,
     WALL,
     ZOMBIE,
-    VICTIM
+    VICTIM,
+    DOOR
+};
+
+enum Movment
+{
+    TOP,
+    LEFT,
+    RIGHT,
+    BOTTOM
 };
 
 struct Color
@@ -32,8 +41,14 @@ struct Position
     int x, y;
 };
 
+typedef class AiAgent AiAgent;
+
+
+// Map Agent ~> Tile
+
 struct Tile
 {
+    AiAgent* agent = nullptr;
     TileType type = FLOOR;
     Position position = {.x = 0, . y = 0};
     int F = 0, G = 0, H = 0;
@@ -66,39 +81,32 @@ inline ostream& operator<< (ostream& cout, Position& pos)
     return cout;
 }
 
+typedef struct Color Color;
+typedef struct Position Position;
+typedef struct Tile Tile;
+typedef class AiAgent AiAgent;
+
 class Game
 {
 public:
     Game(int MAX_X, int MAX_Y);
     ~Game();
     void init();
-    int distance(Tile* current, Tile *target);
-    bool add_tile(Tile tile);
-    Tile* get_tile(Position pos);
-    Tile* get_tile_top(Tile *current);
-    Tile* get_tile_prev(Tile *current);
-    Tile* get_tile_next(Tile *current);
-    Tile* get_tile_bottom(Tile *current);
-    void compute(Tile* current, Tile* compute, Tile* target);
-    bool open_add(Tile* tile);
-    bool closed_add(Tile* tile);
-    bool is_equal(Tile *a, Tile *b);
-    bool in_closed(Tile* tile);
-    bool collision(Tile *check);
-    void print_path(Tile *current);
-    void clear_computedvalues();
-    vector<Tile*> search(Tile *start, Tile *target);
-    void reconstruct_path(Tile *current, vector<Tile*>* path);
     void print_field();
+    bool add_tile(Tile tile);
+    bool move_tile(Tile *current, Movment movment);
+    bool is_equal(Tile *a, Tile *b);
     int get_x();
     int get_y();
+    Tile* get_tile(Position pos);
+    Tile** get_field();
+    vector<AiAgent*>* get_threads();
 
 private:
     Tile **field;
-    priority_queue<Tile*, vector<Tile*>, comparator> open;
-    vector<Tile*> closed;
-    map<Tile*, Tile*> came_from;
+    map<AiAgent*, Tile*> aiagent_map;
     int MAX_X, MAX_Y;
+    vector<AiAgent*> threads;
 
 };
 

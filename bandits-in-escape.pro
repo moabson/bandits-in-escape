@@ -27,10 +27,22 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += main.cpp\
         mainwindow.cpp \
     oglwidget.cpp \
-    game.cpp
+    game.cpp \
+    aiagent.cpp \
+    banditaiagent.cpp \
+    action.cpp \
+    moveinpathaction.cpp \
+    astar.cpp \
+    mythread.cpp
 
 HEADERS  += mainwindow.h \
     oglwidget.h \
-    game.h
+    game.h \
+    aiagent.h \
+    banditaiagent.h \
+    action.h \
+    moveinpathaction.h \
+    astar.h \
+    mythread.h
 
 FORMS    += mainwindow.ui

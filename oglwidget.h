@@ -16,7 +16,7 @@
 #include <string.h>
 
 #include "game.h"
-
+#include "astar.h"
 
 #define MAX_X 5
 #define MAX_Y 5

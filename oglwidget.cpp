@@ -1,5 +1,13 @@
 #include "oglwidget.h"
 
+#include "moveinpathaction.h"
+#include "aiagent.h"
+#include <QThread>
+#include <QDebug>
+#include <QString>
+#include "mythread.h"
+#include "banditaiagent.h"
+
 using namespace std;
 
 static int _WIDTH = 0;
@@ -10,38 +18,54 @@ static int _GRID_OFFSET_Y = 0;
 #define NMAX_X 16
 #define NMAX_Y 12
 
-Game game(NMAX_X, NMAX_Y);
+Game* game = new Game(NMAX_X, NMAX_Y);
 
 static int pi = 0;
 vector<Tile*> path2;
+vector<Tile*> path3;
 static int maxpi = 10;
+Tile* bandit = nullptr;
+AStar astar(game);
+Tile *K = game->get_tile({.x = 0, .y = 2});
+Tile *J = game->get_tile({.x = 0, .y = 8});
+Tile *target2 = game->get_tile({.x = 15, .y = 6});
+
+MyThread* t1 = nullptr;
+MyThread* t2 = nullptr;
+
 
 OGLWidget::OGLWidget(QWidget *parent)
     : QOpenGLWidget(parent)
 {
     QTimer *timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(update()));
-    timer->start(300);
+    timer->start(500);
 
-    cout << "Construtor" << endl;
+//    t1 = new MyThread();
+//    t2 = new MyThread();
 
-    game.print_field();
+//    cout << "Construtor" << endl;
 
-    Tile *K = game.get_tile({.x = 1, .y = 2});
-    Tile *target1 = game.get_tile({.x = 4, .y = 2});
-    Tile *target2 = game.get_tile({.x = 15, .y = 6});
-    // Tile *target2 = target_with_mindist(K);
+//    game->print_field();
 
-    cout << game.search(K, target1).size() << endl;
-
-    for(Tile* t : game.search(K, target2))
+    for(Tile* t : astar.find_path(K, target2))
     {
         path2.push_back(t);
     }
 
+    for(Tile* t : astar.find_path(J, target2))
+    {
+        path3.push_back(t);
+    }
 
-//    path2 = &game.search(K, target2);
+    BanditAiAgent* t3 = static_cast<BanditAiAgent*>(K->agent);
+    BanditAiAgent* t4 = static_cast<BanditAiAgent*>(J->agent);
 
+    t3->set_path(path2);
+    t3->set_current(K);
+
+    t4->set_current(J);
+    t4->set_path(path3);
 }
 
 void draw_point(Position p, Color c)
@@ -151,8 +175,9 @@ void draw_bresenham_line(Position p1, Position p2, Color c)
 
 }
 
-OGLWidget::~OGLWidget(){
-
+OGLWidget::~OGLWidget()
+{
+    delete game;
 }
 
 
@@ -166,6 +191,8 @@ int maxi = 280;
 
 void animation_sample()
 {
+    cout << "sample1" << endl;
+
     if (i < maxi)
     {
         i = i + 10;
@@ -203,6 +230,8 @@ void draw_grid_point(Position p, Color c)
 
 void animation_sample3()
 {
+    cout << "sample3" << endl;
+//    cout << pi << endl;
     if (pi < path2.size())
     {
         Tile* current = path2.at(pi);
@@ -214,18 +243,46 @@ void animation_sample3()
     }
     else
     {
-        pi = 0;
+        pi = 1;
+    }
+}
+
+void animation_sample4()
+{
+//    cout << "sample3" << endl;
+//    cout << pi << endl;
+    if (pi < path2.size())
+    {
+        Tile* current = path2.at(pi);
+
+        if (game->is_equal(bandit, target2))
+        {
+            cout << "chegou no objetivo" << endl;
+
+        }
+        else if (!game->is_equal(bandit, current))
+        {
+            current->agent = bandit->agent;
+            bandit->agent = nullptr;
+            bandit = current;
+        }
+
+        ++pi;
+    }
+    else
+    {
+        pi = 1;
     }
 }
 
 
 void show_tiles()
 {
-    for (int y = 0; y < game.get_y(); ++y)
+    for (int y = 0; y < game->get_y(); ++y)
     {
-        for (int x = 0; x < game.get_x(); ++x)
+        for (int x = 0; x < game->get_x(); ++x)
         {
-            Tile* tile = game.get_tile({.x = x, .y = y});
+            Tile* tile = game->get_tile({.x = x, .y = y});
 
             Color c;
 
@@ -242,11 +299,32 @@ void show_tiles()
             case VICTIM:
                 c = {.r = 0.0, .g = 0.0, .b = 1.0};
                 break;
+            case DOOR:
+                c = {.r = 0.9, .g = 0.9, .b = 0.9};
+                break;
             default:
                 break;
             }
 
             draw_grid_point({.x = x, .y = y}, c);
+
+
+            if (tile->agent != nullptr)
+            {
+                switch (tile->agent->get_type()) {
+                case BANDIT:
+                    draw_grid_point({.x = x, .y = y}, {.r = 1.0, .g = 0.0, .b = 0.0});
+                    break;
+
+                case COP:
+                    draw_grid_point({.x = x, .y = y}, {.r = 0.0, .g = 0.0, .b = 1.0});
+                    break;
+                default:
+                    break;
+                }
+            }
+
+
         }
     }
 }
@@ -286,14 +364,85 @@ void show_grid_lines(Color c)
     }
 }
 
+
+
+void teste(QString name)
+{
+    for (int i = 0; i < 1000; ++i)
+    {
+        qDebug() << name << " " << i;
+//        QThread::sleep(500);
+    }
+}
+
+void update_bandits()
+{
+
+}
+
+void update_cops()
+{
+
+}
+
+void update_grid()
+{
+    cout << "call update grid" << endl;
+}
+
 void OGLWidget::paintGL()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-//    show_grid_lines({.r = 1.0, .g = 0.0, .b = 0.0});
+//    update_grid();
+
+//    t1->name = "t1#";
+//    t1->start();
+
+//    t2->name = "t2#";
+//    t2->start();
 
     show_tiles();
-    animation_sample3();
+
+    vector<AiAgent*> v = *game->get_threads();
+
+    for(AiAgent* aiagent : *game->get_threads())
+    {
+        aiagent->start();
+    }
+
+
+
+//    teste("1# ");
+//    teste("2# ");
+
+
+//    show_grid_lines({.r = 1.0, .g = 0.0, .b = 0.0});
+
+
+//    t3->start();
+//    animation_sample4();
+//    animation_sample3();
+
+
+
+
+//    AStar astar(&game);
+//    Tile *K = game->get_tile({.x = 0, .y = 2});
+
+//    if (K->agent != nullptr && K->agent->get_type() == BANDIT)
+//    {
+//        Tile *target2 = game->get_tile({.x = 15, .y = 6});
+
+//        MoveInPathAction action(&game);
+//        vector<Tile*> p = astar.find_path(K, target2);
+
+//        action->set_path(p);
+//        action->set_current(K);
+//        action->execute();
+//    }
+
+//    animation_sample3();
 
 //    draw_grid_point({.x = 0, .y = 0}, {.r = 0.0, .g = 0.0, .b = 1.0});
 
