@@ -1,18 +1,35 @@
 #include "banditaiagent.h"
+#include <QDebug>
+#include <QMutex>
+#include <QMutexLocker>
 
 void BanditAiAgent::run()
 {
-    cout << "run thread" << endl;
+//    qDebug() << "run thread";
+
     for (Tile* next : path)
     {
+        this->msleep(150);
+
         if (!game->is_equal(current, next))
         {
-            this->sleep(1);
-            next->agent = current->agent;
-            current->agent = nullptr;
-            current = next;
+//            qDebug() << "moving";
 
+            if (next->agent == nullptr)
+            {
+                next->agent = current->agent;
+                current->agent = nullptr;
+                current = next;
+            }
+            else
+            {
+                qDebug() << "collision two agents";
+                // tratar colisão de dois agentes
+                // se for outro bandido fazer nada
+                // se for policia morreu
+            }
         }
+//        mutex.unlock();
     }
 }
 

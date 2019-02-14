@@ -21,8 +21,8 @@ Game::Game(int MAX_X, int MAX_Y)
         }
     }
 
-    Tile t1_VICTIM = Tile(DOOR, {.x = 4, .y = 2});
-    t1_VICTIM.is_target = true;
+//    Tile t1_VICTIM = Tile(DOOR, {.x = 4, .y = 2});
+//    t1_VICTIM.is_target = true;
 
     Tile t2_VICTIM = Tile(DOOR, {.x = 15, .y = 6});
     t2_VICTIM.is_target = true;
@@ -40,7 +40,17 @@ Game::Game(int MAX_X, int MAX_Y)
     add_tile(Tile(WALL, {.x = 2, .y = 1}));
     add_tile(Tile(WALL, {.x = 2, .y = 2}));
     add_tile(Tile(WALL, {.x = 2, .y = 3}));
-    add_tile(t1_VICTIM);
+
+    add_tile(Tile(WALL, {.x = 4, .y = 4}));
+    add_tile(Tile(WALL, {.x = 4, .y = 5}));
+    add_tile(Tile(WALL, {.x = 4, .y = 6}));
+    add_tile(Tile(WALL, {.x = 4, .y = 7}));
+
+    add_tile(Tile(WALL, {.x = 2, .y = 8}));
+    add_tile(Tile(WALL, {.x = 2, .y = 9}));
+    add_tile(Tile(WALL, {.x = 2, .y = 10}));
+
+//    add_tile(t1_VICTIM);
     add_tile(t2_VICTIM);
 }
 

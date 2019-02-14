@@ -30,8 +30,6 @@ SOURCES += main.cpp\
     game.cpp \
     aiagent.cpp \
     banditaiagent.cpp \
-    action.cpp \
-    moveinpathaction.cpp \
     astar.cpp \
     mythread.cpp
 
@@ -40,8 +38,6 @@ HEADERS  += mainwindow.h \
     game.h \
     aiagent.h \
     banditaiagent.h \
-    action.h \
-    moveinpathaction.h \
     astar.h \
     mythread.h
 

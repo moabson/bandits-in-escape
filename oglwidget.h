@@ -14,13 +14,18 @@
 #include <functional>
 #include <vector>
 #include <string.h>
+#include <QThread>
+#include <QDebug>
+#include <QString>
 
 #include "game.h"
 #include "astar.h"
+#include "aiagent.h"
+#include "banditaiagent.h"
+#include "mythread.h"
 
 #define MAX_X 5
 #define MAX_Y 5
-
 
 class OGLWidget : public QOpenGLWidget
 {

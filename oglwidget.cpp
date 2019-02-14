@@ -1,13 +1,5 @@
 #include "oglwidget.h"
 
-#include "moveinpathaction.h"
-#include "aiagent.h"
-#include <QThread>
-#include <QDebug>
-#include <QString>
-#include "mythread.h"
-#include "banditaiagent.h"
-
 using namespace std;
 
 static int _WIDTH = 0;
@@ -39,7 +31,7 @@ OGLWidget::OGLWidget(QWidget *parent)
 {
     QTimer *timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(update()));
-    timer->start(500);
+    timer->start(1);
 
 //    t1 = new MyThread();
 //    t2 = new MyThread();
@@ -61,8 +53,8 @@ OGLWidget::OGLWidget(QWidget *parent)
     BanditAiAgent* t3 = static_cast<BanditAiAgent*>(K->agent);
     BanditAiAgent* t4 = static_cast<BanditAiAgent*>(J->agent);
 
-    t3->set_path(path2);
     t3->set_current(K);
+    t3->set_path(path2);
 
     t4->set_current(J);
     t4->set_path(path3);
@@ -278,6 +270,7 @@ void animation_sample4()
 
 void show_tiles()
 {
+//    qDebug() << "update";
     for (int y = 0; y < game->get_y(); ++y)
     {
         for (int x = 0; x < game->get_x(); ++x)
@@ -403,8 +396,6 @@ void OGLWidget::paintGL()
 //    t2->start();
 
     show_tiles();
-
-    vector<AiAgent*> v = *game->get_threads();
 
     for(AiAgent* aiagent : *game->get_threads())
     {
