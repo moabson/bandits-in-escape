@@ -176,12 +176,12 @@ vector<Tile*> AStar::find_path(Tile *start, Tile *target)
     if (start == nullptr || target == nullptr)
         return path;
 
-    if (!target->is_target) {
-        return path;
-    }
+//    if (!target->is_target) {
+//        return path;
+//    }
 
-    if (start->is_target)
-        return path;
+//    if (start->is_target)
+//        return path;
 
     clear_computedvalues();
 

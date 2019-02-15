@@ -31,7 +31,8 @@ SOURCES += main.cpp\
     aiagent.cpp \
     banditaiagent.cpp \
     astar.cpp \
-    mythread.cpp
+    mythread.cpp \
+    copsaiagent.cpp
 
 HEADERS  += mainwindow.h \
     oglwidget.h \
@@ -39,6 +40,7 @@ HEADERS  += mainwindow.h \
     aiagent.h \
     banditaiagent.h \
     astar.h \
-    mythread.h
+    mythread.h \
+    copsaiagent.h
 
 FORMS    += mainwindow.ui

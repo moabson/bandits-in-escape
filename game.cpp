@@ -1,6 +1,7 @@
 #include "game.h"
 
 #include "banditaiagent.h"
+#include "copsaiagent.h"
 
 Game::Game(int MAX_X, int MAX_Y)
 {
@@ -27,6 +28,10 @@ Game::Game(int MAX_X, int MAX_Y)
     Tile t2_VICTIM = Tile(DOOR, {.x = 15, .y = 6});
     t2_VICTIM.is_target = true;
 
+    Tile cops1 = Tile(FLOOR, {.x = 14, .y = 6});
+    cops1.agent = new CopsAiAgent(this);
+    threads.push_back(cops1.agent);
+
     Tile bandit = Tile(FLOOR, {.x = 0, .y = 2});
     bandit.agent = new BanditAiAgent(this);
     threads.push_back(bandit.agent);
@@ -37,6 +42,7 @@ Game::Game(int MAX_X, int MAX_Y)
 
     add_tile(bandit);
     add_tile(bandit2);
+    add_tile(cops1);
     add_tile(Tile(WALL, {.x = 2, .y = 1}));
     add_tile(Tile(WALL, {.x = 2, .y = 2}));
     add_tile(Tile(WALL, {.x = 2, .y = 3}));
@@ -113,9 +119,31 @@ Tile** Game::get_field()
     return field;
 }
 
-vector<AiAgent*>* Game::get_threads()
+vector<AiAgent*>& Game::get_threads()
 {
-    return &threads;
+    return threads;
+}
+
+Tile* Game::get_tile(AiAgent *agent)
+{
+    auto it = aiagent_map.find(agent);
+    bool end = it == aiagent_map.end();
+
+    if (!end)
+    {
+        Tile* tile = it->second;
+        return tile;
+    }
+
+    return nullptr;
+}
+
+void Game::kill(AiAgent *agent)
+{
+    if (!agent->isFinished())
+        agent->terminate();
+
+    threads.erase(remove(threads.begin(), threads.end(), agent));
 }
 
 Game::~Game()
@@ -135,7 +163,9 @@ Game::~Game()
 
             if (tile->agent != nullptr)
             {
-                tile->agent->terminate();
+                if (!tile->agent->isFinished())
+                    tile->agent->terminate();
+
 //                delete tile->agent;
             }
         }

@@ -99,8 +99,10 @@ public:
     int get_x();
     int get_y();
     Tile* get_tile(Position pos);
+    Tile* get_tile(AiAgent* agent);
     Tile** get_field();
-    vector<AiAgent*>* get_threads();
+    vector<AiAgent*>& get_threads();
+    void kill(AiAgent* agent);
 
 private:
     Tile **field;

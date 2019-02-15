@@ -20,6 +20,7 @@ Tile* bandit = nullptr;
 AStar astar(game);
 Tile *K = game->get_tile({.x = 0, .y = 2});
 Tile *J = game->get_tile({.x = 0, .y = 8});
+Tile *C1 = game->get_tile({.x = 14, .y = 6});
 Tile *target2 = game->get_tile({.x = 15, .y = 6});
 
 MyThread* t1 = nullptr;
@@ -54,10 +55,16 @@ OGLWidget::OGLWidget(QWidget *parent)
     BanditAiAgent* t4 = static_cast<BanditAiAgent*>(J->agent);
 
     t3->set_current(K);
-    t3->set_path(path2);
+//    t3->set_target(target2);
+    t3->set_path(astar.find_path(K, target2));
 
     t4->set_current(J);
-    t4->set_path(path3);
+//    t4->set_target(target2);
+    t4->set_path(astar.find_path(J, target2));
+
+    CopsAiAgent* cops1 = static_cast<CopsAiAgent*>(C1->agent);
+    cops1->set_current(C1);
+    cops1->set_target(K);
 }
 
 void draw_point(Position p, Color c)
@@ -397,7 +404,7 @@ void OGLWidget::paintGL()
 
     show_tiles();
 
-    for(AiAgent* aiagent : *game->get_threads())
+    for(AiAgent* aiagent : game->get_threads())
     {
         aiagent->start();
     }

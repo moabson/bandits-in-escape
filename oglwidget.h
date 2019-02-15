@@ -22,6 +22,7 @@
 #include "astar.h"
 #include "aiagent.h"
 #include "banditaiagent.h"
+#include "copsaiagent.h"
 #include "mythread.h"
 
 #define MAX_X 5
