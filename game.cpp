@@ -146,6 +146,42 @@ void Game::kill(AiAgent *agent)
     threads.erase(remove(threads.begin(), threads.end(), agent));
 }
 
+void Game::clear_aiagents()
+{
+    for (int y = 0; y < MAX_Y; ++y)
+    {
+        for (int x = 0; x < MAX_X; ++x)
+        {
+            Tile* tile = &field[y][x];
+
+            if (tile->agent != nullptr)
+            {
+                kill(tile->agent);
+                tile->agent = nullptr;
+            }
+        }
+    }
+}
+
+void Game::clear_field()
+{
+    clear_aiagents();
+
+    for(int y = 0; y < MAX_Y; ++y)
+    {
+        for(int x = 0; x < MAX_X; ++x)
+        {
+
+            Tile* tile = get_tile({.x = x, .y = y});
+
+            if (tile->type == WALL)
+            {
+                add_tile(Tile(FLOOR, {.x = x, .y = y}));
+            }
+        }
+    }
+}
+
 Game::~Game()
 {
     cout << "Limpando memória" << endl;

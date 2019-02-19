@@ -63,8 +63,17 @@ void CopsAiAgent::run()
             else
             {
                 qDebug() << "collision two agents BANDIT";
-                capture(next->agent);
 
+                if (next->agent != nullptr)
+                {
+                    if (next->type != DOOR && next->agent->get_type() == BANDIT)
+                    {
+                        capture(next->agent);
+                        next->agent = nullptr;
+
+                        cout << "Bandidos restantes: " << game->get_threads().size() << endl;
+                    }
+                }
 //                cout << next->agent << endl;
 
                 // tratar colisão de dois agentes

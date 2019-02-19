@@ -35,14 +35,22 @@ public:
     OGLWidget(QWidget *parent = 0);
     ~OGLWidget();
 
+    static bool _AIAGENT_OPTION;
+    static bool _TILE_OPTION;
+
+    static int _FIELD;
+    static AiAgentType _AIAGENT_TYPE;
+    static TileType _TILE_TYPE;
+
+    static bool _CLEAR_AIAGENTS;
+    static bool _CLEAR_FIELD;
+
 
 protected:
     void initializeGL();
     void resizeGL(int w, int h);
     void paintGL();
     void mousePressEvent(QMouseEvent *event);
-
-private:
 
 
 };

@@ -7,6 +7,17 @@ static int _HEIGHT = 0;
 static int _GRID_OFFSET_X = 0;
 static int _GRID_OFFSET_Y = 0;
 
+bool OGLWidget::_AIAGENT_OPTION = true;
+AiAgentType OGLWidget::_AIAGENT_TYPE = COP;
+
+bool OGLWidget::_TILE_OPTION = false;
+TileType OGLWidget::_TILE_TYPE;
+
+int OGLWidget::_FIELD;
+
+bool OGLWidget::_CLEAR_AIAGENTS = false;
+bool OGLWidget::_CLEAR_FIELD = false;
+
 #define NMAX_X 16
 #define NMAX_Y 12
 
@@ -26,6 +37,10 @@ Tile *target2 = game->get_tile({.x = 15, .y = 6});
 MyThread* t1 = nullptr;
 MyThread* t2 = nullptr;
 
+vector<Position> drawlable;
+
+#include <QPushButton>
+
 
 OGLWidget::OGLWidget(QWidget *parent)
     : QOpenGLWidget(parent)
@@ -33,6 +48,12 @@ OGLWidget::OGLWidget(QWidget *parent)
     QTimer *timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(update()));
     timer->start(1);
+
+//    int s = parent->findChildren<QPushButton>(QString("pushButton")).size();
+
+//    cout << s << endl;
+
+//    connect(btn, SIGNAL (released()), this, SLOT (handleButton()));
 
 //    t1 = new MyThread();
 //    t2 = new MyThread();
@@ -323,8 +344,6 @@ void show_tiles()
                     break;
                 }
             }
-
-
         }
     }
 }
@@ -375,16 +394,6 @@ void teste(QString name)
     }
 }
 
-void update_bandits()
-{
-
-}
-
-void update_cops()
-{
-
-}
-
 void update_grid()
 {
     cout << "call update grid" << endl;
@@ -402,12 +411,32 @@ void OGLWidget::paintGL()
 //    t2->name = "t2#";
 //    t2->start();
 
-    show_tiles();
-
-    for(AiAgent* aiagent : game->get_threads())
+    if (_CLEAR_AIAGENTS)
     {
-        aiagent->start();
+        game->clear_aiagents();
+        _CLEAR_AIAGENTS = false;
     }
+    else if (_CLEAR_FIELD)
+    {
+        game->clear_field();
+        _CLEAR_FIELD = false;
+    }
+    else
+    {
+        show_tiles();
+
+        for(AiAgent* aiagent : game->get_threads())
+        {
+            aiagent->start();
+        }
+    }
+
+
+
+//    for (Position& p : drawlable)
+//    {
+//        draw_grid_point(p, {.r = 0.6, .g = 1.0, .b = 0.2});
+//    }
 
 
 
@@ -452,6 +481,60 @@ void OGLWidget::paintGL()
 
 void OGLWidget::mousePressEvent(QMouseEvent *event)
 {
+
+//    int x = event->x();
+//    int y = event->y();
+
+    int x = floor((float) event->x() / (_WIDTH / NMAX_X));
+    int y = floor((float) event->y() / (_HEIGHT / NMAX_Y));
+
+    Position p = {.x = x, .y = y};
+
+    cout << "x: " << x << " y: " << y << endl;
+
+    if (_AIAGENT_OPTION)
+    {
+
+        if (_AIAGENT_TYPE == COP)
+        {
+            CopsAiAgent* cops = new CopsAiAgent(game);
+
+            Tile* start = game->get_tile({.x = p.x, .y = p.y});
+
+            start->agent = cops;
+
+            cops->set_current(game->get_tile({.x = p.x, .y = p.y}));
+
+            game->get_threads().push_back(cops);
+
+        }
+        else if (_AIAGENT_TYPE == BANDIT)
+        {
+            BanditAiAgent* bandit = new BanditAiAgent(game);
+
+            Tile* start = game->get_tile({.x = p.x, .y = p.y});
+            Tile* target = game->get_tile({.x = 15, .y = 6});
+
+            start->agent = bandit;
+
+            bandit->set_current(game->get_tile({.x = p.x, .y = p.y}));
+            bandit->set_path(astar.find_path(start, target));
+
+            game->get_threads().push_back(bandit);
+        }
+    }
+    else if (_TILE_OPTION)
+    {
+        Tile t;
+        t.position = p;
+        t.type = _TILE_TYPE;
+
+        game->add_tile(t);
+    }
+
+//    drawlable.push_back(p);
+
+
 
 }
 

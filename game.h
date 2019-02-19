@@ -12,6 +12,8 @@
 #include <cmath>
 #include <map>
 
+//#include "aiagent.h"
+
 using namespace  std;
 
 enum TileType
@@ -103,6 +105,8 @@ public:
     Tile** get_field();
     vector<AiAgent*>& get_threads();
     void kill(AiAgent* agent);
+    void clear_aiagents();
+    void clear_field();
 
 private:
     Tile **field;
