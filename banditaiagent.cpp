@@ -8,7 +8,38 @@ vector<Tile*>& BanditAiAgent::lock_target()
     if (current == nullptr || target == nullptr)
         return path;
 
-    path = astar.find_path(current, target);
+    Tile* minTarget = nullptr;
+
+    for (int y = 0; y < game->get_y(); ++y)
+    {
+        for (int x = 0; x < game->get_x(); ++x)
+        {
+            Tile* tile = game->get_tile({.x = x, .y = y});
+
+            if (tile->type == DOOR)
+            {
+                if (minTarget == nullptr)
+                {
+                    minTarget = tile;
+                }
+                else
+                {
+                    int dist = astar.distance(current, tile);
+                    int minDist = astar.distance(current, minTarget);
+
+                    if (dist < minDist)
+                    {
+                        minTarget = tile;
+                    }
+                }
+            }
+        }
+    }
+
+    if (minTarget != nullptr)
+    {
+        path = astar.find_path(current, minTarget);
+    }
 
     return path;
 }
