@@ -61,7 +61,7 @@
     <property name="geometry">
      <rect>
       <x>810</x>
-      <y>90</y>
+      <y>130</y>
       <width>81</width>
       <height>20</height>
      </rect>
@@ -74,7 +74,7 @@
     <property name="geometry">
      <rect>
       <x>810</x>
-      <y>120</y>
+      <y>160</y>
       <width>201</width>
       <height>28</height>
      </rect>
@@ -94,13 +94,23 @@
       <string>Tile - Parede</string>
      </property>
     </item>
+    <item>
+     <property name="text">
+      <string>Tile - Porta</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Tile - Piso</string>
+     </property>
+    </item>
    </widget>
    <widget class="QPushButton" name="pushButton">
     <property name="geometry">
      <rect>
-      <x>820</x>
-      <y>220</y>
-      <width>191</width>
+      <x>810</x>
+      <y>200</y>
+      <width>201</width>
       <height>28</height>
      </rect>
     </property>
@@ -111,14 +121,27 @@
    <widget class="QPushButton" name="pushButton_2">
     <property name="geometry">
      <rect>
-      <x>820</x>
-      <y>260</y>
-      <width>191</width>
+      <x>920</x>
+      <y>90</y>
+      <width>91</width>
       <height>28</height>
      </rect>
     </property>
     <property name="text">
-     <string>Limpar mapa completo</string>
+     <string>Limpar</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_3">
+    <property name="geometry">
+     <rect>
+      <x>810</x>
+      <y>90</y>
+      <width>91</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Carregar</string>
     </property>
    </widget>
   </widget>

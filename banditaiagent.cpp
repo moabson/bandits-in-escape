@@ -15,7 +15,7 @@ vector<Tile*>& BanditAiAgent::lock_target()
 
 void BanditAiAgent::run()
 {
-    for (Tile* next : path)
+    for (Tile* next : lock_target())
     {
         this->msleep(350);
 
@@ -28,17 +28,20 @@ void BanditAiAgent::run()
                 next->agent = current->agent;
                 current->agent = nullptr;
                 current = next;
+
+                if (next->type == DOOR)
+                {
+                    path.clear();
+                    game->get_threads().erase(remove(game->get_threads().begin(), game->get_threads().end(), get_current()->agent));
+                    get_current()->agent = nullptr;
+                }
             }
             else
             {
                 qDebug() << "collision two agents";
                 this->msleep(350);
-                // tratar colisão de dois agentes
-                // se for outro bandido fazer nada
-                // se for policia morreu
             }
         }
-//        mutex.unlock();
     }
 }
 

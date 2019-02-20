@@ -11,6 +11,7 @@
 #include <string>
 #include <cmath>
 #include <map>
+#include <fstream>
 
 //#include "aiagent.h"
 
@@ -18,19 +19,9 @@ using namespace  std;
 
 enum TileType
 {
-    FLOOR,
-    WALL,
-    ZOMBIE,
-    VICTIM,
-    DOOR
-};
-
-enum Movment
-{
-    TOP,
-    LEFT,
-    RIGHT,
-    BOTTOM
+    FLOOR = 0,
+    WALL = 1,
+    DOOR = 2
 };
 
 struct Color
@@ -96,7 +87,6 @@ public:
     void init();
     void print_field();
     bool add_tile(Tile tile);
-    bool move_tile(Tile *current, Movment movment);
     bool is_equal(Tile *a, Tile *b);
     int get_x();
     int get_y();
@@ -107,6 +97,7 @@ public:
     void kill(AiAgent* agent);
     void clear_aiagents();
     void clear_field();
+    void loadmap(string filename);
 
 private:
     Tile **field;

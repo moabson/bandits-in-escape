@@ -17,6 +17,7 @@
 #include <QThread>
 #include <QDebug>
 #include <QString>
+#include <fstream>
 
 #include "game.h"
 #include "astar.h"
@@ -44,6 +45,7 @@ public:
 
     static bool _CLEAR_AIAGENTS;
     static bool _CLEAR_FIELD;
+    static bool _LOAD_FIELD;
 
 
 protected:

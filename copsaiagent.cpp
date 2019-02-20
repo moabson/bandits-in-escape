@@ -71,46 +71,12 @@ void CopsAiAgent::run()
                         capture(next->agent);
                         next->agent = nullptr;
 
-                        cout << "Bandidos restantes: " << game->get_threads().size() << endl;
+                        cout << "Agentes restantes: " << game->get_threads().size() << endl;
                     }
                 }
-//                cout << next->agent << endl;
-
-                // tratar colisão de dois agentes
-                // se for outro bandido fazer nada
-                // se for policia morreu
             }
         }
     }
-    else if (path.size() == 1)
-    {
-        cout << "um " << endl;
-    }
-
-//    for (Tile* next : astar.find_path(current, target))
-//    {
-//        this->msleep(150);
-
-//        if (!game->is_equal(current, next))
-//        {
-////            qDebug() << "moving";
-
-//            if (next->agent == nullptr)
-//            {
-//                next->agent = current->agent;
-//                current->agent = nullptr;
-//                current = next;
-//            }
-//            else
-//            {
-//                qDebug() << "collision two agents";
-//                // tratar colisão de dois agentes
-//                // se for outro bandido fazer nada
-//                // se for policia morreu
-//            }
-//        }
-////        mutex.unlock();
-//    }
 }
 
 

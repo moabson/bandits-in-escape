@@ -13,34 +13,17 @@ AiAgentType OGLWidget::_AIAGENT_TYPE = COP;
 bool OGLWidget::_TILE_OPTION = false;
 TileType OGLWidget::_TILE_TYPE;
 
-int OGLWidget::_FIELD;
+int OGLWidget::_FIELD = 1;
 
 bool OGLWidget::_CLEAR_AIAGENTS = false;
 bool OGLWidget::_CLEAR_FIELD = false;
+bool OGLWidget::_LOAD_FIELD = false;
 
 #define NMAX_X 16
 #define NMAX_Y 12
 
 Game* game = new Game(NMAX_X, NMAX_Y);
-
-static int pi = 0;
-vector<Tile*> path2;
-vector<Tile*> path3;
-static int maxpi = 10;
-Tile* bandit = nullptr;
 AStar astar(game);
-Tile *K = game->get_tile({.x = 0, .y = 2});
-Tile *J = game->get_tile({.x = 0, .y = 8});
-Tile *C1 = game->get_tile({.x = 14, .y = 6});
-Tile *target2 = game->get_tile({.x = 15, .y = 6});
-
-MyThread* t1 = nullptr;
-MyThread* t2 = nullptr;
-
-vector<Position> drawlable;
-
-#include <QPushButton>
-
 
 OGLWidget::OGLWidget(QWidget *parent)
     : QOpenGLWidget(parent)
@@ -48,44 +31,6 @@ OGLWidget::OGLWidget(QWidget *parent)
     QTimer *timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(update()));
     timer->start(1);
-
-//    int s = parent->findChildren<QPushButton>(QString("pushButton")).size();
-
-//    cout << s << endl;
-
-//    connect(btn, SIGNAL (released()), this, SLOT (handleButton()));
-
-//    t1 = new MyThread();
-//    t2 = new MyThread();
-
-//    cout << "Construtor" << endl;
-
-//    game->print_field();
-
-    for(Tile* t : astar.find_path(K, target2))
-    {
-        path2.push_back(t);
-    }
-
-    for(Tile* t : astar.find_path(J, target2))
-    {
-        path3.push_back(t);
-    }
-
-    BanditAiAgent* t3 = static_cast<BanditAiAgent*>(K->agent);
-    BanditAiAgent* t4 = static_cast<BanditAiAgent*>(J->agent);
-
-    t3->set_current(K);
-//    t3->set_target(target2);
-    t3->set_path(astar.find_path(K, target2));
-
-    t4->set_current(J);
-//    t4->set_target(target2);
-    t4->set_path(astar.find_path(J, target2));
-
-    CopsAiAgent* cops1 = static_cast<CopsAiAgent*>(C1->agent);
-    cops1->set_current(C1);
-    cops1->set_target(K);
 }
 
 void draw_point(Position p, Color c)
@@ -206,30 +151,6 @@ void OGLWidget::initializeGL()
     resizeGL(this->width(),this->height());
 }
 
-int i = 0;
-int maxi = 280;
-
-void animation_sample()
-{
-    cout << "sample1" << endl;
-
-    if (i < maxi)
-    {
-        i = i + 10;
-    }
-    else
-    {
-        i = 0;
-    }
-
-    glColor3f(1.0, 1.0, 0.0);
-    glRecti(300, 300, 790, 10);
-
-    glColor3f(1.0, 0.0, 0.0);
-    glRecti(300, 300, 790, 310 + i);
-}
-
-
 void draw_grid_point(Position p, Color c)
 {
     if (p.x >= NMAX_X || p.y >= NMAX_Y)
@@ -248,57 +169,9 @@ void draw_grid_point(Position p, Color c)
     glRecti(minX, minY, maxX, maxY);
 }
 
-void animation_sample3()
-{
-    cout << "sample3" << endl;
-//    cout << pi << endl;
-    if (pi < path2.size())
-    {
-        Tile* current = path2.at(pi);
-
-        draw_grid_point({.x = current->position.x, .y = current->position.y}, {.r = 0.6, .g = 0.1, .b = 0.5});
-
-//        cout << i << endl;
-        ++pi;
-    }
-    else
-    {
-        pi = 1;
-    }
-}
-
-void animation_sample4()
-{
-//    cout << "sample3" << endl;
-//    cout << pi << endl;
-    if (pi < path2.size())
-    {
-        Tile* current = path2.at(pi);
-
-        if (game->is_equal(bandit, target2))
-        {
-            cout << "chegou no objetivo" << endl;
-
-        }
-        else if (!game->is_equal(bandit, current))
-        {
-            current->agent = bandit->agent;
-            bandit->agent = nullptr;
-            bandit = current;
-        }
-
-        ++pi;
-    }
-    else
-    {
-        pi = 1;
-    }
-}
-
 
 void show_tiles()
 {
-//    qDebug() << "update";
     for (int y = 0; y < game->get_y(); ++y)
     {
         for (int x = 0; x < game->get_x(); ++x)
@@ -314,12 +187,6 @@ void show_tiles()
             case WALL:
                 c = {.r = 1.0, .g = 1.0, .b = 0.5};
                 break;
-            case ZOMBIE:
-                c = {.r = 1.0, .g = 0.0, .b = 0.0};
-                break;
-            case VICTIM:
-                c = {.r = 0.0, .g = 0.0, .b = 1.0};
-                break;
             case DOOR:
                 c = {.r = 0.9, .g = 0.9, .b = 0.9};
                 break;
@@ -328,7 +195,6 @@ void show_tiles()
             }
 
             draw_grid_point({.x = x, .y = y}, c);
-
 
             if (tile->agent != nullptr)
             {
@@ -345,22 +211,6 @@ void show_tiles()
                 }
             }
         }
-    }
-}
-
-int k = 0;
-int maxK = 9;
-
-void animation_sample2()
-{
-    if (k <= maxK)
-    {
-        draw_grid_point({.x = 7, .y = 9 - k}, {.r = 1.0, .g = 0.0, .b = 0.0});
-        k++;
-    }
-    else
-    {
-        k = 0;
     }
 }
 
@@ -383,33 +233,9 @@ void show_grid_lines(Color c)
     }
 }
 
-
-
-void teste(QString name)
-{
-    for (int i = 0; i < 1000; ++i)
-    {
-        qDebug() << name << " " << i;
-//        QThread::sleep(500);
-    }
-}
-
-void update_grid()
-{
-    cout << "call update grid" << endl;
-}
-
 void OGLWidget::paintGL()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-//    update_grid();
-
-//    t1->name = "t1#";
-//    t1->start();
-
-//    t2->name = "t2#";
-//    t2->start();
 
     if (_CLEAR_AIAGENTS)
     {
@@ -421,6 +247,28 @@ void OGLWidget::paintGL()
         game->clear_field();
         _CLEAR_FIELD = false;
     }
+    else if (_LOAD_FIELD)
+    {
+        game->clear_aiagents();
+        game->clear_field();
+
+        string filename;
+
+        switch (_FIELD) {
+        case 1:
+            filename = "mapa_cidade_universitaria";
+            break;
+        case 2:
+            filename = "mapa_2";
+            break;
+        default:
+            break;
+        }
+
+        game->loadmap(filename);
+
+        _LOAD_FIELD = false;
+    }
     else
     {
         show_tiles();
@@ -431,111 +279,64 @@ void OGLWidget::paintGL()
         }
     }
 
-
-
-//    for (Position& p : drawlable)
-//    {
-//        draw_grid_point(p, {.r = 0.6, .g = 1.0, .b = 0.2});
-//    }
-
-
-
-//    teste("1# ");
-//    teste("2# ");
-
-
-//    show_grid_lines({.r = 1.0, .g = 0.0, .b = 0.0});
-
-
-//    t3->start();
-//    animation_sample4();
-//    animation_sample3();
-
-
-
-
-//    AStar astar(&game);
-//    Tile *K = game->get_tile({.x = 0, .y = 2});
-
-//    if (K->agent != nullptr && K->agent->get_type() == BANDIT)
-//    {
-//        Tile *target2 = game->get_tile({.x = 15, .y = 6});
-
-//        MoveInPathAction action(&game);
-//        vector<Tile*> p = astar.find_path(K, target2);
-
-//        action->set_path(p);
-//        action->set_current(K);
-//        action->execute();
-//    }
-
-//    animation_sample3();
-
-//    draw_grid_point({.x = 0, .y = 0}, {.r = 0.0, .g = 0.0, .b = 1.0});
-
-//    animation_sample2();
-
     glFlush();
-
 }
 
 void OGLWidget::mousePressEvent(QMouseEvent *event)
 {
-
-//    int x = event->x();
-//    int y = event->y();
-
     int x = floor((float) event->x() / (_WIDTH / NMAX_X));
     int y = floor((float) event->y() / (_HEIGHT / NMAX_Y));
 
     Position p = {.x = x, .y = y};
 
-    cout << "x: " << x << " y: " << y << endl;
+    Tile *tile = game->get_tile(p);
 
-    if (_AIAGENT_OPTION)
+    if (tile != nullptr)
     {
-
-        if (_AIAGENT_TYPE == COP)
+        if (tile->type != WALL && tile->type != DOOR)
         {
-            CopsAiAgent* cops = new CopsAiAgent(game);
+            if (_AIAGENT_OPTION && tile->agent == nullptr)
+            {
+                if (_AIAGENT_TYPE == COP)
+                {
+                    CopsAiAgent* cops = new CopsAiAgent(game);
 
-            Tile* start = game->get_tile({.x = p.x, .y = p.y});
+                    Tile* start = game->get_tile({.x = p.x, .y = p.y});
 
-            start->agent = cops;
+                    start->agent = cops;
 
-            cops->set_current(game->get_tile({.x = p.x, .y = p.y}));
+                    cops->set_current(game->get_tile({.x = p.x, .y = p.y}));
 
-            game->get_threads().push_back(cops);
+                    game->get_threads().push_back(cops);
 
+                }
+                else if (_AIAGENT_TYPE == BANDIT)
+                {
+                    BanditAiAgent* bandit = new BanditAiAgent(game);
+
+                    Tile* start = game->get_tile({.x = p.x, .y = p.y});
+                    Tile* target = game->get_tile({.x = 15, .y = 6});
+
+                    start->agent = bandit;
+
+                    bandit->set_current(game->get_tile({.x = p.x, .y = p.y}));
+                    bandit->set_target(target);
+//                    bandit->set_path(astar.find_path(start, target));
+
+                    game->get_threads().push_back(bandit);
+                }
+            }
         }
-        else if (_AIAGENT_TYPE == BANDIT)
+
+        if (_TILE_OPTION && !_AIAGENT_OPTION && tile->agent == nullptr)
         {
-            BanditAiAgent* bandit = new BanditAiAgent(game);
+            Tile t;
+            t.position = p;
+            t.type = _TILE_TYPE;
 
-            Tile* start = game->get_tile({.x = p.x, .y = p.y});
-            Tile* target = game->get_tile({.x = 15, .y = 6});
-
-            start->agent = bandit;
-
-            bandit->set_current(game->get_tile({.x = p.x, .y = p.y}));
-            bandit->set_path(astar.find_path(start, target));
-
-            game->get_threads().push_back(bandit);
+            game->add_tile(t);
         }
     }
-    else if (_TILE_OPTION)
-    {
-        Tile t;
-        t.position = p;
-        t.type = _TILE_TYPE;
-
-        game->add_tile(t);
-    }
-
-//    drawlable.push_back(p);
-
-
-
 }
 
 void OGLWidget::resizeGL(int w, int h)

@@ -44,3 +44,7 @@ HEADERS  += mainwindow.h \
     copsaiagent.h
 
 FORMS    += mainwindow.ui
+
+DISTFILES += \
+    data/mapa_2.txt \
+    data/mapa_cidade_universitaria.txt

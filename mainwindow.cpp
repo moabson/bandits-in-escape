@@ -10,6 +10,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->pushButton, SIGNAL (released()), this, SLOT (handleButton1()));
     connect(ui->pushButton_2, SIGNAL (released()), this, SLOT (handleButton2()));
+    connect(ui->pushButton_3, SIGNAL (released()), this, SLOT (handleButton3()));
 }
 
 MainWindow::~MainWindow()
@@ -19,21 +20,14 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_comboBox_currentIndexChanged(const QString &arg1)
 {
-//    if(arg1 == "Naive 1")
-//    {
-//        OGLWidget::_NAIVE1ALGO = true;
-//        OGLWidget::_NAIVE2ALGO = false;
-//    }
-//    else if(arg1 == "Naive 2")
-//    {
-//        OGLWidget::_NAIVE1ALGO = false;
-//        OGLWidget::_NAIVE2ALGO = true;
-//    }
-//    else if(arg1 == "Bresenham")
-//    {
-//        OGLWidget::_NAIVE1ALGO = false;
-//        OGLWidget::_NAIVE2ALGO = false;
-//    }
+    if(arg1 == "Cidade Universitária")
+    {
+        OGLWidget::_FIELD = 1;
+    }
+    else if(arg1 == "Mapa 2")
+    {
+        OGLWidget::_FIELD = 2;
+    }
 }
 
 void MainWindow::on_comboBox_2_currentIndexChanged(const QString &arg1)
@@ -58,6 +52,18 @@ void MainWindow::on_comboBox_2_currentIndexChanged(const QString &arg1)
         OGLWidget::_TILE_OPTION = true;
         OGLWidget::_TILE_TYPE = WALL;
     }
+    else if(arg1 == "Tile - Porta")
+    {
+        OGLWidget::_AIAGENT_OPTION = false;
+        OGLWidget::_TILE_OPTION = true;
+        OGLWidget::_TILE_TYPE = DOOR;
+    }
+    else if(arg1 == "Tile - Piso")
+    {
+        OGLWidget::_AIAGENT_OPTION = false;
+        OGLWidget::_TILE_OPTION = true;
+        OGLWidget::_TILE_TYPE = FLOOR;
+    }
 }
 
 void MainWindow::handleButton1()
@@ -69,3 +75,9 @@ void MainWindow::handleButton2()
 {
     OGLWidget::_CLEAR_FIELD = true;
 }
+
+void MainWindow::handleButton3()
+{
+    OGLWidget::_LOAD_FIELD = true;
+}
+

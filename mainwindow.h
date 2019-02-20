@@ -22,6 +22,7 @@ private slots:
     void on_comboBox_2_currentIndexChanged(const QString &arg1);
     void handleButton1();
     void handleButton2();
+    void handleButton3();
 
 private:
     Ui::MainWindow *ui;
