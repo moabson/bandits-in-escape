@@ -2,6 +2,7 @@
 
 #include "astar.h"
 #include "banditaiagent.h"
+#include "oglwidget.h"
 
 Tile* CopsAiAgent::lock_target()
 {
@@ -70,6 +71,7 @@ void CopsAiAgent::run()
                     {
                         capture(next->agent);
                         next->agent = nullptr;
+                        OGLWidget::nCaptured++;
 
                         cout << "Agentes restantes: " << game->get_threads().size() << endl;
                     }

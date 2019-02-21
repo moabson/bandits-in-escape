@@ -23,6 +23,7 @@ private slots:
     void handleButton1();
     void handleButton2();
     void handleButton3();
+    void updateWindow();
 
 private:
     Ui::MainWindow *ui;

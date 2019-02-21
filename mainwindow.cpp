@@ -5,12 +5,17 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
+    QTimer *timer = new QTimer(this);
     ui->setupUi(this);
     ui->openGLWidget->context();
 
     connect(ui->pushButton, SIGNAL (released()), this, SLOT (handleButton1()));
     connect(ui->pushButton_2, SIGNAL (released()), this, SLOT (handleButton2()));
     connect(ui->pushButton_3, SIGNAL (released()), this, SLOT (handleButton3()));
+
+    connect(timer, SIGNAL(timeout()), this, SLOT(updateWindow()));
+
+    timer->start(1);
 }
 
 MainWindow::~MainWindow()
@@ -79,5 +84,11 @@ void MainWindow::handleButton2()
 void MainWindow::handleButton3()
 {
     OGLWidget::_LOAD_FIELD = true;
+}
+
+void MainWindow::updateWindow()
+{
+    ui->nCapturados->setText(QString::number(OGLWidget::nCaptured));
+    ui->nEscaparam->setText(QString::number(OGLWidget::nEscaped));
 }
 

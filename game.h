@@ -13,8 +13,6 @@
 #include <map>
 #include <fstream>
 
-//#include "aiagent.h"
-
 using namespace  std;
 
 enum TileType

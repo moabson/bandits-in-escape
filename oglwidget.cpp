@@ -1,4 +1,5 @@
 #include "oglwidget.h"
+#include "texture.h"
 
 using namespace std;
 
@@ -18,6 +19,9 @@ int OGLWidget::_FIELD = 1;
 bool OGLWidget::_CLEAR_AIAGENTS = false;
 bool OGLWidget::_CLEAR_FIELD = false;
 bool OGLWidget::_LOAD_FIELD = false;
+
+int OGLWidget::nCaptured = 0;
+int OGLWidget::nEscaped = 0;
 
 #define NMAX_X 16
 #define NMAX_Y 12
@@ -149,6 +153,46 @@ OGLWidget::~OGLWidget()
 void OGLWidget::initializeGL()
 {
     resizeGL(this->width(),this->height());
+
+    Texture::loadTexture("floor.png", 0);
+    Texture::loadTexture("wall.jpg", 1);
+    Texture::loadTexture("door.png", 2);
+    Texture::loadTexture("pmal.png", 3);
+    Texture::loadTexture("bandit.png", 4);
+    Texture::loadTexture("ufal.png", 5);
+//    Texture::loadTexture("wood.jpg", 1);
+}
+
+void draw_tile(Tile* tile, int textureId)
+{
+    Position p = tile->position;
+
+    if (p.x >= NMAX_X || p.y >= NMAX_Y)
+        return;
+
+    int minX, maxX;
+    int minY, maxY;
+
+    maxX = ((p.x == 0) ? 1 : p.x + 1) * _GRID_OFFSET_X;
+    maxY = ((p.y == 0) ? 1 : p.y + 1) * _GRID_OFFSET_Y;
+
+    minX = maxX - _GRID_OFFSET_X;
+    minY = maxY - _GRID_OFFSET_Y;
+
+    glBindTexture(GL_TEXTURE_2D, Texture::textures[textureId]);
+    glEnable(GL_TEXTURE_2D);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    glBegin(GL_QUADS);
+        glColor3f(1.0f, 1.0f, 1.0f);
+        glTexCoord2i(0, 0); glVertex2f(minX, minY); // top left
+        glTexCoord2i(0, 1); glVertex2f(minX, maxY); // bottom left
+        glTexCoord2i(1, 1); glVertex2f(maxX, maxY); // bottom right
+        glTexCoord2i(1, 0); glVertex2f(maxX, minY); // top right
+    glEnd();
+
+    glDisable(GL_TEXTURE_2D);
 }
 
 void draw_grid_point(Position p, Color c)
@@ -183,28 +227,33 @@ void show_tiles()
             switch (tile->type) {
             case FLOOR:
                 c = {.r = 0.5, .g = 0.3, .b = 0.9};
+//                draw_grid_point({.x = x, .y = y}, c);
+                draw_tile(tile, 0);
                 break;
             case WALL:
-                c = {.r = 1.0, .g = 1.0, .b = 0.5};
+//                c = {.r = 1.0, .g = 1.0, .b = 0.5};
+                draw_tile(tile, 1);
                 break;
             case DOOR:
-                c = {.r = 0.9, .g = 0.9, .b = 0.9};
+//                c = {.r = 0.9, .g = 0.9, .b = 0.9};
+//                draw_grid_point({.x = x, .y = y}, c);
+                draw_tile(tile, 5);
                 break;
             default:
                 break;
             }
 
-            draw_grid_point({.x = x, .y = y}, c);
-
             if (tile->agent != nullptr)
             {
                 switch (tile->agent->get_type()) {
                 case BANDIT:
-                    draw_grid_point({.x = x, .y = y}, {.r = 1.0, .g = 0.0, .b = 0.0});
+//                    draw_grid_point({.x = x, .y = y}, {.r = 1.0, .g = 0.0, .b = 0.0});
+                    draw_tile(tile, 4);
                     break;
 
                 case COP:
-                    draw_grid_point({.x = x, .y = y}, {.r = 0.0, .g = 0.0, .b = 1.0});
+//                    draw_grid_point({.x = x, .y = y}, {.r = 0.0, .g = 0.0, .b = 1.0});
+                    draw_tile(tile, 3);
                     break;
                 default:
                     break;
@@ -236,6 +285,9 @@ void show_grid_lines(Color c)
 void OGLWidget::paintGL()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    Color c = {.r = 0.9, .g = 0.9, .b = 0.9};
+
+    draw_grid_point({.x = 0, .y = 0}, c);
 
     if (_CLEAR_AIAGENTS)
     {
@@ -246,6 +298,9 @@ void OGLWidget::paintGL()
     {
         game->clear_field();
         _CLEAR_FIELD = false;
+
+        OGLWidget::nCaptured = 0;
+        OGLWidget::nEscaped = 0;
     }
     else if (_LOAD_FIELD)
     {

@@ -47,6 +47,9 @@ public:
     static bool _CLEAR_FIELD;
     static bool _LOAD_FIELD;
 
+    static int nCaptured;
+    static int nEscaped;
+
 
 protected:
     void initializeGL();

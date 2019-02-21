@@ -14,52 +14,8 @@ Game::Game(int MAX_X, int MAX_Y)
         this->field[y] = new Tile[MAX_X];
     }
 
-//    for(int y = 0; y < MAX_Y; ++y)
-//    {
-//        for(int x = 0; x < MAX_X; ++x)
-//        {
-//            add_tile(Tile(FLOOR, {.x = x, .y = y}));
-//        }
-//    }
-
     loadmap("mapa_cidade_universitaria");
 
-//    Tile t1_VICTIM = Tile(DOOR, {.x = 4, .y = 2});
-//    t1_VICTIM.is_target = true;
-
-//    Tile t2_VICTIM = Tile(DOOR, {.x = 15, .y = 6});
-//    t2_VICTIM.is_target = true;
-
-//    Tile cops1 = Tile(FLOOR, {.x = 14, .y = 6});
-//    cops1.agent = new CopsAiAgent(this);
-//    threads.push_back(cops1.agent);
-
-//    Tile bandit = Tile(FLOOR, {.x = 0, .y = 2});
-//    bandit.agent = new BanditAiAgent(this);
-//    threads.push_back(bandit.agent);
-
-//    Tile bandit2 = Tile(FLOOR, {.x = 0, .y = 8});
-//    bandit2.agent = new BanditAiAgent(this);
-//    threads.push_back(bandit2.agent);
-
-//    add_tile(bandit);
-//    add_tile(bandit2);
-//    add_tile(cops1);
-//    add_tile(Tile(WALL, {.x = 2, .y = 1}));
-//    add_tile(Tile(WALL, {.x = 2, .y = 2}));
-//    add_tile(Tile(WALL, {.x = 2, .y = 3}));
-
-//    add_tile(Tile(WALL, {.x = 4, .y = 4}));
-//    add_tile(Tile(WALL, {.x = 4, .y = 5}));
-//    add_tile(Tile(WALL, {.x = 4, .y = 6}));
-//    add_tile(Tile(WALL, {.x = 4, .y = 7}));
-
-//    add_tile(Tile(WALL, {.x = 2, .y = 8}));
-//    add_tile(Tile(WALL, {.x = 2, .y = 9}));
-//    add_tile(Tile(WALL, {.x = 2, .y = 10}));
-
-////    add_tile(t1_VICTIM);
-//    add_tile(t2_VICTIM);
 }
 
 bool Game::add_tile(Tile tile)
@@ -175,15 +131,11 @@ void Game::clear_field()
     {
         for(int x = 0; x < MAX_X; ++x)
         {
+            add_tile(Tile(FLOOR, {.x = x, .y = y}));
 
-            Tile* tile = get_tile({.x = x, .y = y});
-
-            if (tile->type == WALL)
-            {
-                add_tile(Tile(FLOOR, {.x = x, .y = y}));
-            }
         }
     }
+
 }
 
 void Game::loadmap(string filename)
@@ -193,7 +145,7 @@ void Game::loadmap(string filename)
     if (!file.is_open())
         return;
 
-    clear_aiagents();
+//    clear_aiagents();
     clear_field();
 
     for (int y = 0; y < MAX_Y; ++y)

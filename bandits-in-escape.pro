@@ -5,7 +5,7 @@
 #-------------------------------------------------
 
 QT       += core gui opengl
-LIBS     += -lGLU -lGL -lglut
+LIBS     += -lGLU -lGL -lglut -lsfml-graphics -lsfml-window -lsfml-system
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -32,7 +32,8 @@ SOURCES += main.cpp\
     banditaiagent.cpp \
     astar.cpp \
     mythread.cpp \
-    copsaiagent.cpp
+    copsaiagent.cpp \
+    texture.cpp
 
 HEADERS  += mainwindow.h \
     oglwidget.h \
@@ -41,7 +42,8 @@ HEADERS  += mainwindow.h \
     banditaiagent.h \
     astar.h \
     mythread.h \
-    copsaiagent.h
+    copsaiagent.h \
+    texture.h
 
 FORMS    += mainwindow.ui
 

@@ -4,6 +4,10 @@
 #include "aiagent.h"
 #include "astar.h"
 #include <vector>
+#include <QDebug>
+#include <QMutex>
+#include <QMutexLocker>
+
 
 using namespace std;
 

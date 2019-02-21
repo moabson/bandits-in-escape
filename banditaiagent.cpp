@@ -1,7 +1,5 @@
 #include "banditaiagent.h"
-#include <QDebug>
-#include <QMutex>
-#include <QMutexLocker>
+#include "oglwidget.h"
 
 vector<Tile*>& BanditAiAgent::lock_target()
 {
@@ -65,6 +63,7 @@ void BanditAiAgent::run()
                     path.clear();
                     game->get_threads().erase(remove(game->get_threads().begin(), game->get_threads().end(), get_current()->agent));
                     get_current()->agent = nullptr;
+                    OGLWidget::nEscaped++;
                 }
             }
             else
