@@ -5,7 +5,7 @@ GLuint Texture::textures[20];
 bool Texture::sphere = false;
 
 bool Texture::loadImage(string name) {
-    string path = "/home/moabson/projetos/bandits-in-escape/data/textures/" + name;
+    string path = "/home/moabson/MEGA/CdC/IA2/Códigos/bandits-in-escape/data/textures/" + name;
 
     cout << path << endl;
 

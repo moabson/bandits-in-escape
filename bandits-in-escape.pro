@@ -49,4 +49,11 @@ FORMS    += mainwindow.ui
 
 DISTFILES += \
     data/mapa_2.txt \
-    data/mapa_cidade_universitaria.txt
+    data/mapa_cidade_universitaria.txt \
+    data/textures/floor.jpg \
+    data/textures/wall.jpg \
+    data/textures/bandit.png \
+    data/textures/door.png \
+    data/textures/floor.png \
+    data/textures/pmal.png \
+    data/textures/ufal.png

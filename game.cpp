@@ -140,7 +140,7 @@ void Game::clear_field()
 
 void Game::loadmap(string filename)
 {
-    ifstream file("data/" + filename + ".txt");
+    ifstream file("/home/moabson/MEGA/CdC/IA2/Códigos/bandits-in-escape/data/" + filename + ".txt");
 
     if (!file.is_open())
         return;
